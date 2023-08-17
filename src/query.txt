@@ -1,9 +1,9 @@
 with t AS
 (select l.detection_group, min(r.detection_time) as start_time, l.detection_time as end_time
 from detections l 
-left join detections r on EXTRACT(EPOCH FROM (l.detection_time::timestamp - r.detection_time::timestamp)) between 0 and 60
-and l.detection_group = r.detection_group
-where r.detection_time >= COALESCE('2023-08-16 17:20:12+00', TO_DATE('',''))
+left join detections r on l.detection_group = r.detection_group
+where r.detection_time >= COALESCE('2023-08-16 17:20:12+00', TO_DATE('','')) and
+EXTRACT(EPOCH FROM (l.detection_time::timestamp - r.detection_time::timestamp)) between 0 and 60
 group by l.detection_group, l.detection_time) 
 
 select t.detection_group, t.start_time, max(t.end_time) as end_time from t where t.start_time is not null
